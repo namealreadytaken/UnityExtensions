@@ -4,6 +4,11 @@ using System.Collections.Generic;
 
 public static class ExtensionsSet
 {
+    public static bool ApproxEquals(this float f1, float f2, float precision = 3f)
+    {
+        return (Mathf.Abs(f1 - f2) <= Mathf.Pow(10.0f, -precision));
+    }
+
     public static void SelfDestruct(this MonoBehaviour m)
     {
         MonoBehaviour.Destroy(m.gameObject);
@@ -223,6 +228,44 @@ public static class ExtensionsSet
         }
     }
 
+    /*
+     * rotation tweening
+     */
+    public static IEnumerator RotateTo(this Transform t, float delay, Vector3 to, Easing easing = Easing.Linear)
+    {
+        return t.RotateFromTo(delay, t.localEulerAngles, to, easing);
+    }
+
+    public static IEnumerator RotateFromTo(this Transform t, float delay, Vector3 from, Vector3 to, Easing easing = Easing.Linear)
+    {
+        float spawntime = Time.time;
+        float currentTime = Time.time - spawntime;
+        float step = 0;
+        while (currentTime < delay)
+        {
+            currentTime = Time.time - spawntime;
+            step = easeStep(currentTime / delay, easing);
+            t.localEulerAngles = Vector3.Lerp(from, to, step);
+            yield return null;
+        }
+        t.localEulerAngles = to;
+    }
+    public static IEnumerator RotateBounce(this Transform t, float delay, Vector3 from, Vector3 to, Easing easing = Easing.Linear)
+    {
+        while (true)
+        {
+            IEnumerator ie = t.RotateFromTo(delay, from, to, easing);
+            while (ie.MoveNext())
+            {
+                yield return null;
+            }
+            IEnumerator ie2 = t.RotateFromTo(delay, to, from, easing);
+            while (ie2.MoveNext())
+            {
+                yield return null;
+            }
+        }
+    }
 
     /*
      * scale tweening
