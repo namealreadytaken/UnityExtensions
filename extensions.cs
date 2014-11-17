@@ -1,9 +1,15 @@
 ﻿using UnityEngine;
+using UnityEngine.UI;
 using System.Collections;
 using System.Collections.Generic;
 
 public static class ExtensionsSet
 {
+    public static int mod(int a, int n)
+    {
+        return ((a % n) + n) % n;
+    }
+
     public static bool ApproxEquals(this float f1, float f2, float precision = 3f)
     {
         return (Mathf.Abs(f1 - f2) <= Mathf.Pow(10.0f, -precision));
@@ -72,6 +78,19 @@ public static class ExtensionsSet
             yield return null;
         }
         text.color = new Color(text.color.r, text.color.g, text.color.b, 0f);
+    }
+
+    public static IEnumerator FadeFromTo(this Graphic graphic, float delay, float from = 1, float to = 0)
+    {
+        float spawntime = Time.time;
+        float currentTime = Time.time - spawntime;
+        while (currentTime < delay)
+        {
+            currentTime = Time.time - spawntime;
+            graphic.color = new Color(graphic.color.r, graphic.color.g, graphic.color.b, Mathf.Lerp(from, to, currentTime / delay));
+            yield return null;
+        }
+        graphic.color = new Color(graphic.color.r, graphic.color.g, graphic.color.b, to);
     }
 
     public static void SetPositionX(this Transform t, float newX)
