@@ -27,6 +27,10 @@ public static class ExtensionsSet
         t.localScale = new Vector3(1, 1, 1);
     }
 
+    public static bool isOnLeftSide(this Transform t, Transform other)
+    {
+        return Vector3.Dot(t.TransformDirection(t.position - other.position), t.right) > 0;
+    }
 
     public static T[] GetComponentsInChildrenWithTag<T>(this GameObject gameObject, string tag)
      where T : Component
@@ -109,7 +113,10 @@ public static class ExtensionsSet
     {
         return new Vector3(v.x, v.y, newZ);
     }
-
+    public static Vector3 toVector2(this Vector3 v)
+    {
+        return new Vector2(v.x, v.y);
+    }
     #region Random
     //Vector
     public static Vector3 RandomRangeXY(this Vector3 v, float rangeMinX, float rangeMaxX, float rangeMinY = float.NaN, float rangeMaxY = float.NaN)
@@ -289,6 +296,10 @@ public static class ExtensionsSet
     /*
      * scale tweening
      */
+    public static IEnumerator ScaleTo(this Transform t, float delay, float toX = 1, float toY = 1, Easing easing = Easing.Linear)
+    {
+        return t.ScaleFromTo(delay, t.localScale.x, toX, t.localScale.y, toY, easing);
+    }
     public static IEnumerator ScaleTo(this Transform t, float delay, float to = 1, Easing easing = Easing.Linear)
     {
         return t.ScaleFromTo(delay, t.localScale.x, to, t.localScale.y, to, easing);
