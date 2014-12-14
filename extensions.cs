@@ -84,19 +84,6 @@ public static class ExtensionsSet
         text.color = new Color(text.color.r, text.color.g, text.color.b, 0f);
     }
 
-    public static IEnumerator FadeFromTo(this Graphic graphic, float delay, float from = 1, float to = 0)
-    {
-        float spawntime = Time.time;
-        float currentTime = Time.time - spawntime;
-        while (currentTime < delay)
-        {
-            currentTime = Time.time - spawntime;
-            graphic.color = new Color(graphic.color.r, graphic.color.g, graphic.color.b, Mathf.Lerp(from, to, currentTime / delay));
-            yield return null;
-        }
-        graphic.color = new Color(graphic.color.r, graphic.color.g, graphic.color.b, to);
-    }
-
     public static void SetPositionX(this Transform t, float newX)
     {
         t.position = new Vector3(newX, t.position.y, t.position.z);
@@ -117,6 +104,35 @@ public static class ExtensionsSet
     {
         return new Vector2(v.x, v.y);
     }
+
+    #region UI
+    public static IEnumerator FadeFromTo(this Graphic graphic, float delay, float from = 1, float to = 0)
+    {
+        float spawntime = Time.time;
+        float currentTime = Time.time - spawntime;
+        while (currentTime < delay)
+        {
+            currentTime = Time.time - spawntime;
+            graphic.color = new Color(graphic.color.r, graphic.color.g, graphic.color.b, Mathf.Lerp(from, to, currentTime / delay));
+            yield return null;
+        }
+        graphic.color = new Color(graphic.color.r, graphic.color.g, graphic.color.b, to);
+    }
+
+    public static IEnumerator typeWrite(this Text text, string toWrite, float typingDelay)
+    {
+        int lettersToWrite = 0;
+        float spawntime = Time.time;
+        while (Time.time - spawntime < typingDelay * toWrite.Length)
+        {
+            lettersToWrite = (int)(Time.time - spawntime) / (int)typingDelay;
+            text.text = toWrite.Substring(0, lettersToWrite);
+            yield return null;
+        }
+        text.text = toWrite;
+    }
+    #endregion
+
     #region Random
     //Vector
     public static Vector3 RandomRangeXY(this Vector3 v, float rangeMinX, float rangeMaxX, float rangeMinY = float.NaN, float rangeMaxY = float.NaN)
